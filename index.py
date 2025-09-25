@@ -13,13 +13,21 @@ IPTV_PASS    = "430214"
 # ================== APP ==================
 app = FastAPI()
 
+# ================== ROTA DE VERIFICAÇÃO DE SAÚDE (ROOT) ==================
+@app.get("/")
+def read_root():
+    """Retorna informações básicas sobre a API e suas rotas."""
+    return {
+        "status": "Online",
+        "message": "API unificada de Filmes e Séries. Acesse /movie ou /series.",
+        "rotas": {
+            "filmes": "https://n-api-ashen.vercel.app/movie?tmdb_id=...",
+            "series": "https://n-api-ashen.vercel.app/series?tmdb_id=..."
+        }
+    }
 # ================== HELPERS ==================
 
 # Função de Cache (Simplificada para ambiente Vercel)
-# Nota: Em um ambiente serverless como o Vercel, o cache de arquivos em disco (como no PHP) não é persistente. 
-# Para manter a simplicidade, o cache em memória ou um serviço externo (Redis, Memcached) é a melhor prática, 
-# mas aqui faremos uma versão simples sem cache em disco para evitar problemas de permissão/persistência.
-# Removendo a lógica de cache para focar na conversão da lógica principal.
 def http_get_json(url):
     try:
         headers = {"User-Agent": "Mozilla/5.0 (compatible; TMDB-IPTV/1.0)"}
