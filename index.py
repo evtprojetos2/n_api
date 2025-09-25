@@ -13,7 +13,7 @@ IPTV_PASS    = "430214"
 # ================== APP ==================
 app = FastAPI()
 
-# ================== ROTA DE VERIFICAÇÃO DE SAÚDE (ROOT) ==================
+# ================== ROTA DE DIAGNÓSTICO (RAIZ) ==================
 @app.get("/")
 def read_root():
     """Retorna informações básicas sobre a API e suas rotas."""
@@ -25,9 +25,9 @@ def read_root():
             "series": "https://n-api-ashen.vercel.app/series?tmdb_id=..."
         }
     }
+
 # ================== HELPERS ==================
 
-# Função de Cache (Simplificada para ambiente Vercel)
 def http_get_json(url):
     try:
         headers = {"User-Agent": "Mozilla/5.0 (compatible; TMDB-IPTV/1.0)"}
@@ -114,7 +114,8 @@ async def get_movie_details(request: Request):
         "trailer": trailer,
         "generos": [g['name'] for g in details.get('genres', [])],
         "elenco": [
-            {"name": c.get('name', ""), "foto": f"https://image.tmdb.org/t/p/w200{c['profile_path']}"}
+            # CORREÇÃO CRÍTICA: Uso seguro de .get() para evitar KeyError
+            {"name": c.get('name', ""), "foto": f"https://image.tmdb.org/t/p/w200{c.get('profile_path')}"}
             for c in details.get('credits', {}).get('cast', [])[:10] if c.get('profile_path')
         ],
     }
